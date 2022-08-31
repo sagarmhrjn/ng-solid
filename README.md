@@ -1,27 +1,14 @@
-# SolidAngular
+# Solid design principles in the context of Angular
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.2.1.
+## Table of Contents
 
-## Development server
+- [What is Design Principle](##what-is-design-principle)
+- [Single Responsibility Principle](#single-responsibility-principle)
+- [Open Closed Principle](#open-closed-principle)
+- [Liskov Substitution Principle](#liskov-substitution-principle)
+- [Inteface Seggregation Principle](#interface-seggregation-principle)
+- [Dependecy Inversion Principle](#dependency-invesrion-principle)
+## What is design  principle?
+Design principle is <em><strong>recommendations on how to design your code such a  way in order to keep it maintainable flexible and so on and so forth and telling that it's  recommendation it means that it is very abstract and it doesn't have any concrete implementations.</strong></em>&nbsp;We can implement some design principle in many different ways. Already on top of this design  principle we have design patterns which solve some already concrete use case and implement one two or  more design principles and we are not restricted by only those five design principles we have many  more like dry don't repeat yourself principle or keys keep it simple and there are many of them but  these five <strong>S.O.L.I.D</strong> are the most popular ones.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## Single Responsibility Principle
