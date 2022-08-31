@@ -100,7 +100,7 @@ export class WidgetComponent implements OnInit {
 }
 ```
 
-<center>widget.component.ts</center>
+<p style="text-align: center;">widget.component.ts</p>
 <br/>
 
 If we have a look at the widget component we can say that widget component generates  the layout for the view of our component and it exports the data as a json and most probably the export of the json is not responsibility of the component itself yeah it can handle this on export json click event.
@@ -129,7 +129,7 @@ export class JsonExporterService {
 }
 ```
 
-<center>json-exporter.service.ts</center>
+<<p style="text-align: center;">>json-exporter.service.ts</p>
 <br/>
 
 Our app component became more lean and it  is responsible exactly for rendering the content and rendering the toolbar.
@@ -152,7 +152,7 @@ import { Component } from "@angular/core";
 export class AppComponent {}
 ```
 
-<center>app.component.ts</center>
+<<p style="text-align: center;">>app.component.ts</p>
 <br/>
 
 As you can see, we have splitted responsibility between three entities app component widget component and also service. <em><strong>Find your balance in splitting all these responsibilities because you may split it to such a small pieces that yeah you will be flexible like a hell but it might be too hard to support this.</strong></em> So, find your balance usually you find it within your team during the code reviews and yeah it's my variety from team to team what responsibility of what because there is no some super strict rule which can determine it.
