@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Reloadable, WidgetContent } from './widget-content';
 
 @Component({
   selector: 'app-weather-content',
@@ -11,6 +12,11 @@ import { Component } from '@angular/core';
   `,
   styleUrls: ['./widget-content.scss'],
 })
-export class WeatherContentComponent {
+export class WeatherContentComponent implements WidgetContent, Reloadable {
   constructor() {}
+  id: string = '';
+  loading: boolean = false;
+  reload(): void {
+    console.log('reload...!!!');
+  }
 }

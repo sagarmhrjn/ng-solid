@@ -6,7 +6,7 @@
 - [Single Responsibility Principle](#single-responsibility-principle)
 - [Open Closed Principle](#open-closed-principle)
 - [Liskov Substitution Principle](#liskov-substitution-principle)
-- [Inteface Seggregation Principle](#interface-seggregation-principle)
+- [Inteface Segregation Principle](#interface-segregation-principle)
 - [Dependency Inversion Principle](#dependency-invesrion-principle)
 
 ## What is design principle?
@@ -362,4 +362,69 @@ export class WidgetComponent extends WidgetBase {
 ```
 <p align="center">widget.component.ts</p>
 
-So, the solution to not violate this principle is to just <em>remove it and remove it completely if we're not doing some any additional logic for  widget component or if we do <strong>we should not break the contract of this it should  not return some completely different type which is not compatible</strong> so if the return type is void then also type of the extended handler function handler should be also void and we can of course call super and then we can do something like console log or additional whatever.<em> So this is how we can extend it without violating this design principle. 
+So, the solution to not violate this principle is to just <em>remove it and remove it completely if we're not doing some any additional logic for  widget component or if we do <strong>we should not break the contract of this it should  not return some completely different type which is not compatible</strong> so if the return type is void then also type of the extended handler function handler should be also void and we can of course call super and then we can do something like console log or additional whatever.</em> So this is how we can extend it without violating this design principle. 
+
+## Interface Segregation Principle
+<blockquote><em><strong>"A client should never be forced to implement an interface that it doesn’t use or clients shouldn’t be forced to depend on methods they do not use."</em></strong></blockquote>
+Interface segregation principle sounds like <em><strong>many client-specific interfaces are better than one general purpose interface</strong></em> and what does it mean???<br/> 
+As example we have velocity and weather content and we would like to define some interface for them some contract and we usually do it via interfaces.
+
+```typescript
+export interface WidgetContent {
+  id: string;
+  loading: boolean;
+  reload(): void;
+}
+```
+So, we've generated the interface widget content as an interface. Now, let's say we want to have the id which should be some string maybe just for testing purpose whatever and let's assume that this content should support let's save live reloading so means that we're pulling some data from the server if some new data arrives we render the view and we can say that we need the property loading to show some maybe spinner during the request to the back end which is boolean and we need some maybe function let's say reload and it should return void.
+
+```typescript
+export class VelocityContentComponent implements WidgetContent {
+  constructor() {}
+  id: string = '';
+  loading: boolean = false;
+  reload(): void {
+    console.log('do polling...!!!');
+  }
+}
+
+export class WeatherContentComponent implements WidgetContent {
+  constructor() {}
+  id: string = '';
+  loading: boolean = false;
+  reload(): void {
+    console.log('do polling...!!!');
+  }
+}
+```
+We've implemented this widget content interface for every content and implement all the necessary fields for the velocity widget content and exactly the same for weather content. But here is the <b>problem</b> imagine that someone we know the product owner comes to us and says, <em>"You know what, that live reloading for weather makes sense because weather changes really fast and we need to reflect the latest data but for velocity we update this data only every end of the sprint usually two weeks and we don't need to do polling for this data, it should not be supported. It doesn't make sense for this kind of data so it should not support the live reloading."</em> <em><strong>But the thing is that we have to. Okay! we don't support we can leave it empty but in this case we still have to keep this loading property and reload just in order to follow the widget content interface. So, this is where interface segregation can help us. </strong></em>
+
+```typescript
+export interface WidgetContent {
+  id: string;
+}
+
+export interface Reloadable {
+  loading: boolean;
+  reload(): void;
+}
+
+```
+<p align="center">widget-content.ts</p>
+
+```typescript
+export class VelocityContentComponent implements WidgetContent {
+  constructor() {}
+  id: string = '';
+}
+
+export class WeatherContentComponent implements WidgetContent, Reloadable {
+  constructor() {}
+  id: string = '';
+  loading: boolean = false;
+  reload(): void {
+    console.log('do polling...!!!');
+  }
+}
+```
+Instead of having WidgetContent big interface we have splitted it on two interfaces called interface reloadable and then we would say that okay weather should support it so we have implemented also reloadable interface but for velocity we do not support live reload so we can safely remove unwanted code which is not being used and which is obsolete for our velocity content. This is the interface segregation principle in action. So, we've just <strong>refactored one big interface to many other smaller interfaces.</strong> 
