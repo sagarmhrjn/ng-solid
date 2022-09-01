@@ -9,10 +9,14 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { WidgetComponent } from './widget/widget.component';
+import { WeatherContentComponent } from './widget/weather-content.component';
+import { VelocityContentComponent } from './widget/velocity-content.component';
 @NgModule({
   declarations: [
     AppComponent,
-    WidgetComponent
+    WidgetComponent,
+    WeatherContentComponent,
+    VelocityContentComponent
   ],
   imports: [
     BrowserModule,

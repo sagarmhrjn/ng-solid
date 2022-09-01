@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { JsonExporterService } from '../json-exporter.service';
 
 @Component({
@@ -11,11 +11,7 @@ import { JsonExporterService } from '../json-exporter.service';
       </button>
     </div>
     <mat-divider></mat-divider>
-    <p>Currently</p>
-    <section class="wether-widget">
-      <mat-icon class="widget-icon">wb_sunny</mat-icon>
-      <div class="value">+25</div>
-    </section>
+    <ng-content></ng-content>
   `,
   styles: [
     `
@@ -28,34 +24,18 @@ import { JsonExporterService } from '../json-exporter.service';
         width: 400px;
         margin-left: 20px;
       }
-      .wether-widget {
-        display: block;
-        text-align: center;
-        position: relative;
-        min-width: 190px;
-      }
       .header {
         display: flex;
         align-items: center;
         justify-content: space-between;
       }
-      .widget-icon {
-        font-size: 64px;
-        width: 64px;
-        height: 64px;
-        color: orange;
-      }
-      .value {
-        font-size: 24px;
-        opacity: 0.7;
-      }
     `,
   ],
 })
-export class WidgetComponent implements OnInit {
+export class WidgetComponent{
+  @Input()
+  widget: 'weather' | 'velocity' = 'weather'
   constructor(private jsonExporter: JsonExporterService) {}
-
-  ngOnInit(): void {}
 
   onExportJson() {
     this.jsonExporter.export();

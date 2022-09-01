@@ -148,3 +148,172 @@ export class AppComponent {}
 ```
 <p align="center">app.component.ts</p>
 As you can see, we have splitted responsibility between three entities app component widget component and also service. <em><strong>Find your balance in splitting all these responsibilities because you may split it to such a small pieces that yeah you will be flexible like a hell but it might be too hard to support this.</strong></em> So, find your balance usually you find it within your team during the code reviews and yeah it's my variety from team to team what responsibility of what because there is no some super strict rule which can determine it.
+
+
+## Open Closed Principle
+<blockquote><em><strong>"Objects or entities should be open for extension, but closed for modification."</strong></em></blockquote>
+Open close principle is very important one and it sounds like software entities should  be open for extension but closed for modification and what does it mean on the in the real life it  means that you should <strong><em>design your classes models and libraries even libraries such a way that you should extend it functionality without touching the component. A very good example is libraries you cannot modify components which are coming from some certain library because they are closed and published into the npm. So, you have no access to the source code to change but still you  have to be able somehow extend this functionality.</em></strong> 
+<br/><br/>
+Here we have two widgets but different content inside so the first one is weather but when the second one is also whether but it is the velocity which shows the last velocity of your last sprint. It has small differences comparing to the first implementation but this is like pretty much similar we have separately app widget and it has the property weather or velocity. 
+
+```typescript
+import { Component, OnInit } from "@angular/core";
+import { JsonExporterService } from "../json-exporter.service";
+
+@Component({
+  selector: "app-widget",
+  template: `
+    <div class="header">
+      <h1>Weather</h1>
+      <button mat-stroked-button (click)="onExportJson()">
+        Export as JSON
+      </button>
+    </div>
+    <mat-divider></mat-divider>
+    <ng-container *ngIf="widget === 'weather'">
+      <p>Currently</p>
+      <section class="wether-widget">
+        <mat-icon class="widget-icon">wb_sunny</mat-icon>
+        <div class="value">+25</div>
+      </section>
+    </ng-container>
+    <ng-container *ngIf="widget === 'velocity'">
+      <p>Last Sprint</p>
+      <section class="wether-widget">
+        <mat-icon class="widget-icon">assessment</mat-icon>
+        <div class="value">Planned: <strong>25</strong></div>
+        <div class="value">Archived: <strong>20</strong></div>
+      </section>
+    </ng-container>
+  `,
+  styles: [],
+})
+export class WidgetComponent{
+  @Input()
+  widget: 'weather' | 'velocity' = 'weather'
+  constructor(private jsonExporter: JsonExporterService) {}
+
+  onExportJson() {
+    this.jsonExporter.export();
+  }
+}
+```
+<p align="center">widget.component.ts</p>
+
+```typescript
+import { Component } from "@angular/core";
+
+@Component({
+  selector: "app-root",
+  template: `
+    <mat-toolbar color="primary">
+      <span>My App</span>
+    </mat-toolbar>
+    <main class="content">
+      <app-widget widget="weather"></app-widget>
+      <app-widget widget="velocity"></app-widget>
+    </main>
+  `,
+  styles: [],
+})
+export class AppComponent {}
+```
+<p align="center">app.component.ts</p>
+If we have a look at the  component implementation itself we will see that it has such a thing like <strong>*ngIf</strong>; if widget is weather then we render the view for weather otherwise we render the velocity view. We can of course use ng switch here it doesn't really matter for this particular case  but the <em><strong>problem with this that it is closed definitely especially if we distribute this as a library it is closed you cannot modify it but it is not open we cannot add the new content to it as example we want to have third widget which renders some just a paragraph or some another view and we cannot do this because we have restricted by only these two types either weather or velocity and this is the violation of open close principle.</strong></em> <br/><br/>
+
+Now, how can we solve this issue?? We can create separate view or separate component for every of this widget and then <strong><em>we would use the just a content projection like ng-content.</em></strong> So we'll generate two components first one we'll name weather content and then we create the same both for velocity.
+
+```typescript
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-weather-content',
+  template: `
+    <p>Currently</p>
+    <section class="widget-content">
+      <mat-icon class="widget-icon">wb_sunny</mat-icon>
+      <div class="value">+25</div>
+    </section>
+  `,
+  styleUrls: ['./widget-content.scss'],
+})
+export class WeatherContentComponent {
+  constructor() {}
+}
+```
+<p align="center">weather-content.component.ts</p>
+
+```typescript
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-velocity-content',
+  template: `
+    <p>Last Sprint</p>
+    <section class="widget-content">
+      <mat-icon class="widget-icon">assessment</mat-icon>
+      <div class="value">Planned: <strong>25</strong></div>
+      <div class="value">Archived: <strong>20</strong></div>
+    </section>
+  `,
+  styleUrls: ['./widget-content.scss'],
+})
+export class VelocityContentComponent {
+  constructor() {}
+}
+```
+<p align="center">velocity-content.component.ts</p>
+
+We've moved html from weather to weather content and similar to for our velocity then we have removed ng-container content from widget component and instead we will use ng-content right there. So, here instead of ng-content will be rendered anything we put between app widget tag. There are <em>another way how to implement it you can use this with the <strong>component outlet and ng container</strong></em> but it doesn't really matter for this case you are free to implement as as you want. 
+
+```scss
+.widget-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: orange;
+}
+.value {
+    font-size: 24px;
+    opacity: 0.7;
+}
+
+.widget-content {
+    display: block;
+    text-align: center;
+    position: relative;
+    min-width: 190px;
+}
+```
+<p align="center">widget-content.scss</p>
+
+```typescript
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  template: `
+    <mat-toolbar color="primary">
+      <span>My App</span>
+    </mat-toolbar>
+    <main class="content">
+      <app-widget>
+        <app-weather-content></app-weather-content>
+      </app-widget>
+      <app-widget>
+        <app-velocity-content></app-velocity-content>
+      </app-widget>
+      <app-widget>
+        <p>Content is coming</p>
+      </app-widget>
+    </main>
+  `,
+  styles: [],
+})
+export class AppComponent {}
+```
+<p align="center">app.component.ts</p>
+
+We've added some styles because the definitely value and widget icon should be part of styles for these two component(weather, velocity component). So, we've created a new file <i><b>widget-content.scss</b></i> which'll be the common styles for for this everything and weather-widget and velocity-widget. And inside app component already we don't need widget inputs anymore and we can define which content we want to have here and or this case <b><i>app-weather-content and app velocity-content</i></b> 
+
+Now we can see the benefit of this everything if we want to <em><strong>introduce the new widget and with some specific content</strong></em> there inside we can easily do this we can just place the paragraph there and say that content is coming <em><strong>without modifying the app widget itself.</strong></em> We could <em><strong>extend it with another content</strong></em> and now if we have a look at our widgets we can see that we <em><strong>reused completely the widget itself but the content is customizable and can easily customize this and change the view.</strong></em>
