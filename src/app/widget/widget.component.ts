@@ -1,11 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { JsonExporterService } from '../json-exporter.service';
+import { WidgetBase } from './widget-base';
 
 @Component({
   selector: 'app-widget',
   template: `
     <div class="header">
-      <h1>Weather</h1>
+      <h1>{{ title }}</h1>
       <button mat-stroked-button (click)="onExportJson()">
         Export as JSON
       </button>
@@ -32,12 +33,10 @@ import { JsonExporterService } from '../json-exporter.service';
     `,
   ],
 })
-export class WidgetComponent{
-  @Input()
-  widget: 'weather' | 'velocity' = 'weather'
-  constructor(private jsonExporter: JsonExporterService) {}
-
-  onExportJson() {
-    this.jsonExporter.export();
+export class WidgetComponent extends WidgetBase {
+  override onExportJson(): void {
+    // throw Error('I do not support it')
+    super.onExportJson();
+    console.log('sf')
   }
 }

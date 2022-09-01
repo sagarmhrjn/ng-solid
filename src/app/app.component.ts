@@ -7,13 +7,13 @@ import { Component } from '@angular/core';
       <span>My App</span>
     </mat-toolbar>
     <main class="content">
-      <app-widget>
+      <app-widget title="Weather">
         <app-weather-content></app-weather-content>
       </app-widget>
-      <app-widget>
+      <app-widget title="Velocity">
         <app-velocity-content></app-velocity-content>
       </app-widget>
-      <app-widget>
+      <app-widget title="Anything">
         <p>Content is coming</p>
       </app-widget>
     </main>

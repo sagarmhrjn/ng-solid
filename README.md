@@ -317,3 +317,49 @@ export class AppComponent {}
 We've added some styles because the definitely value and widget icon should be part of styles for these two component(weather, velocity component). So, we've created a new file <i><b>widget-content.scss</b></i> which'll be the common styles for for this everything and weather-widget and velocity-widget. And inside app component already we don't need widget inputs anymore and we can define which content we want to have here and or this case <b><i>app-weather-content and app velocity-content</i></b> 
 
 Now we can see the benefit of this everything if we want to <em><strong>introduce the new widget and with some specific content</strong></em> there inside we can easily do this we can just place the paragraph there and say that content is coming <em><strong>without modifying the app widget itself.</strong></em> We could <em><strong>extend it with another content</strong></em> and now if we have a look at our widgets we can see that we <em><strong>reused completely the widget itself but the content is customizable and can easily customize this and change the view.</strong></em>
+
+## Liskov Substitution Principle
+<blockquote><em><strong>"Let q(x) be a property provable about objects of x of type T. Then q(y) should be provable for objects y of type S where S is a subtype of T."</strong></em></blockquote>
+Liskov Barbara, liskov's substitution principle sounds like <em><strong>functions that use pointers or references to base classes must be able to use objects of derived classes without knowing it</strong></em>, sounds a little bit complicated. <em>Imagine you have two classes parent class and child class which extends the apparent one and lisco substitution principle means that <strong>objects of this super class or parent class should be replaceable with its subclasses or child class without breaking the application.</strong></em><br/><br/>
+Now, let's have a look at the example: Let's imagine that <strong><em>we want to have slightly different wrappers.</strong></em> We want to have this one and maybe we are planning to have <strong><em>some another modifications of this widget container</strong></em> and we know that all those containers will have some functionality like export to json and all of them should support the input title. <strong><em>We don't want to duplicate everything here we want to extract this to some base class. </strong></em>
+
+```typescript
+import { Directive, Input } from '@angular/core';
+import { JsonExporterService } from '../json-exporter.service';
+
+@Directive()
+export class WidgetBase {
+  @Input()
+  title: string = '';
+  constructor(private jsonExporter: JsonExporterService) {}
+
+  onExportJson() {
+    this.jsonExporter.export();
+  }
+}
+```
+<p align="center">widget-base.ts</p>
+So, we've created a class and named it to widget base. So inside this widget-based class we've moved the whole logic from the widget component. <strong><em>For the input decorator we have to decorate this class with directive because since "Ivy" we have to do it; if we are going to use inputs and extend to another component with this new base class.</strong></em>
+
+```typescript
+export class WidgetComponent extends WidgetBase {
+  override onExportJson(): void {
+    throw Error('We do not support this now')
+  }
+}
+```
+<p align="center">widget.component.ts</p>
+We have extended this and how we can violate the liskov substitution principle?? <strong><em>We can violate this by overriding this method on export json and as an example; instead of exporting the export json we throw some error like we do not support it.</strong></em> This is the only violation because it <strong><em>changes the behavior</strong></em> of this on export json comparing to its parent there's completely  different logic and if we replace the implementation of this widget base with  widget content we will break our application which is actually the violation of a liskov substitution principle. 
+
+```typescript
+export class WidgetComponent extends WidgetBase {
+  override onExportJson(): void {
+    // throw Error('I do not support it')
+    super.onExportJson();
+    console.log('additional logging or whatever')
+  }
+}
+```
+<p align="center">widget.component.ts</p>
+
+So, the solution to not violate this principle is to just <em>remove it and remove it completely if we're not doing some any additional logic for  widget component or if we do <strong>we should not break the contract of this it should  not return some completely different type which is not compatible</strong> so if the return type is void then also type of the extended handler function handler should be also void and we can of course call super and then we can do something like console log or additional whatever.<em> So this is how we can extend it without violating this design principle. 
